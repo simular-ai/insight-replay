@@ -1,4 +1,58 @@
-## Layout
+<div align="center">
+
+# Stateful Reasoning via Insight Replay
+
+**Periodically extract critical insights from a model's reasoning trace and replay them near the active generation frontier — keeping insights accessible as the chain scales.**
+
+[![Project Page](https://img.shields.io/badge/Project-Page-1f72ff?logo=github&logoColor=white)](https://simular-ai.github.io/InsightReplay/)
+[![arXiv](https://img.shields.io/badge/arXiv-Coming%20Soon-b31b1b?logo=arxiv&logoColor=white)](#)
+[![License](https://img.shields.io/badge/License-TBD-lightgray)](#license)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+
+<img src="assets/teaser.png" alt="Accuracy vs. mean tokens for Baseline vs. InsightReplay" width="720"/>
+
+<sub>Accuracy vs. mean tokens for **Baseline** (standard CoT) and **InsightReplay** (1, 3, 5 replay rounds), averaged over three 30B-tier models on the LiveCodeBench v5 subset. InsightReplay shifts the accuracy peak to longer chains and raises peak performance.</sub>
+
+</div>
+
+---
+
+## TL;DR
+
+As a chain-of-thought grows, a model's attention to **critical insights** produced earlier in the trace gradually weakens — making them progressively less accessible when they are most needed. **InsightReplay** fixes this by periodically extracting these insights and replaying them near the active generation frontier.
+
+Across the full **2 × 3 × 4** grid of {8B, 30B} × {Qwen3.5, DeepSeek-R1-Distill-Qwen, Gemma-4} × {AIME, HMMT, GPQA Diamond, LiveCodeBench v5}:
+
+- ✅ Gains on **all 24 settings** over standard CoT
+- 📈 **+1.65** averaged accuracy improvement
+- 🚀 **+9.2** points peak gain (R1-Distill-32B, LiveCodeBench v5)
+
+## Method
+
+<p align="center">
+  <img src="assets/method.png" alt="InsightReplay method diagram" width="900"/>
+</p>
+
+InsightReplay treats reasoning as a **stateful** process. At any point, the reasoning *state* is the cumulative set of *insights* the model has generated so far — compressed abstractions of prior reasoning. Periodically, the model extracts new insights and replays them near the active generation frontier, so critical intermediate content remains accessible despite the natural attention decay that comes with long chains.
+
+## Results
+
+<p align="center">
+  <img src="assets/results_aggregate.png" alt="Aggregate comparison" width="900"/>
+</p>
+
+<details>
+<summary><b>Per-tier breakdown</b> (click to expand)</summary>
+
+#### 30B-tier models
+<img src="assets/results_30b_tier.png" alt="30B-tier results" width="900"/>
+
+#### 8B-tier models
+<img src="assets/results_8b_tier.png" alt="8B-tier results" width="900"/>
+
+</details>
+
+## Repository Layout
 
 ```
 .
@@ -20,33 +74,22 @@
 │   ├── repair_no_answer.py           # patch records with empty <Answer>
 │   ├── sample_eval_livecodebench.py  # one-off LCB sanity tester
 │   └── math_verify_util.py           # math equivalence checker (LaTeX answers)
+├── assets/                           # figures used in this README
 └── outputs/                          # generated at run time
 ```
 
-Inside `outputs/`, results are organised as
-`<model>__<dataset>__<suffix>/raw_<suffix>.jsonl`, where `<suffix>` is one
-of `unlimited` (baseline), `verify_only`, `insightreplay` (1-turn), or
-`insightreplay_3turns` (3-turn).
+Inside `outputs/`, results are organised as `<model>__<dataset>__<suffix>/raw_<suffix>.jsonl`, where `<suffix>` is one of `unlimited` (baseline), `verify_only`, `insightreplay` (1-turn), or `insightreplay_3turns` (3-turn).
 
 ## Datasets
 
-The `data/` directory ships with `aime.jsonl`, `gpqa_diamond_test.jsonl`,
-`hmmt.jsonl`, and `livecodebench_v5.jsonl`. The LiveCodeBench file is
-~111 MB and is tracked via [Git LFS](https://git-lfs.com); install
-`git-lfs` before cloning, or run `git lfs pull` after cloning to fetch it.
+The `data/` directory ships with `aime.jsonl`, `gpqa_diamond_test.jsonl`, `hmmt.jsonl`, and `livecodebench_v5.jsonl`. The LiveCodeBench file is ~111 MB and is tracked via [Git LFS](https://git-lfs.com); install `git-lfs` before cloning, or run `git lfs pull` after cloning to fetch it.
 
 ## Requirements
 
 - Python 3.10+
-- A vLLM-compatible GPU box. The driver assumes 8 GPUs (TP=1×DP=8 for the
-  8B tier, TP=2×DP=4 for the 30B tier); adjust by setting `FBE_GPU_IDS`
-  and the per-model `tp_size` field in `scripts/prompt.py`.
-- Docker — required by the LiveCodeBench grader for sandboxed code
-  execution. Skip if you only run AIME / GPQA / HMMT.
-- Model weights — by default the driver passes the HuggingFace repo id
-  to vLLM, which resolves it via the HF cache. To use a pre-downloaded
-  local snapshot, export `FBE_MODEL_PATH_<KEY>` (e.g.
-  `FBE_MODEL_PATH_QWEN35_35B_A3B=/abs/path/to/snapshot`).
+- A vLLM-compatible GPU box. The driver assumes 8 GPUs (TP=1×DP=8 for the 8B tier, TP=2×DP=4 for the 30B tier); adjust by setting `FBE_GPU_IDS` and the per-model `tp_size` field in `scripts/prompt.py`.
+- Docker — required by the LiveCodeBench grader for sandboxed code execution. Skip if you only run AIME / GPQA / HMMT.
+- Model weights — by default the driver passes the HuggingFace repo id to vLLM, which resolves it via the HF cache. To use a pre-downloaded local snapshot, export `FBE_MODEL_PATH_<KEY>` (e.g. `FBE_MODEL_PATH_QWEN35_35B_A3B=/abs/path/to/snapshot`).
 
 ## Install
 
@@ -59,14 +102,13 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-If you plan to run LiveCodeBench, also pull the grader's sandbox image
-once before launching:
+If you plan to run LiveCodeBench, also pull the grader's sandbox image once before launching:
 
 ```bash
 docker pull python:3.10-slim
 ```
 
-## One-shot run
+## Quick Start
 
 ```bash
 ./run_all.sh
@@ -75,15 +117,13 @@ docker pull python:3.10-slim
 That's it. The driver:
 
 1. starts vLLM once per model,
-2. iterates baseline → verify_only → 1-turn → 3-turn over `aime`, `gpqa`,
-   `livecodebench` for that model,
+2. iterates baseline → verify_only → 1-turn → 3-turn over `aime`, `gpqa`, `livecodebench` for that model,
 3. auto-grades any `livecodebench` outputs in place,
 4. cleans up vLLM and moves to the next model.
 
-Each cell is **idempotent** — if its output jsonl already exists the step
-is skipped. To rerun a cell, delete its directory under `outputs/`.
+Each cell is **idempotent** — if its output jsonl already exists the step is skipped. To rerun a cell, delete its directory under `outputs/`.
 
-## Tuning the run
+## Tuning the Run
 
 The driver respects these environment variables:
 
@@ -99,9 +139,7 @@ The driver respects these environment variables:
 | `FBE_INSIGHTREPLAY_CONT_MAX_TOKENS` | `30000` | continuation budget |
 | `FBE_GRADE_WORKERS` / `FBE_GRADE_TIMEOUT` | `8` / `20` | LCB grader parallelism / per-test timeout |
 
-To run a single model only, comment out the other `run_model …` lines at
-the bottom of `run_all.sh`. To skip a method, delete its call inside
-`run_model`'s inner loop.
+To run a single model only, comment out the other `run_model …` lines at the bottom of `run_all.sh`. To skip a method, delete its call inside `run_model`'s inner loop.
 
 ## Outputs
 
@@ -127,3 +165,22 @@ outputs/summary_insightreplay_3turns.csv
 
 with columns `model,dataset,method,n,n_correct,acc,avg_tok,max_tok,avg_steps,out_dir`.
 
+## Citation
+
+If you find InsightReplay useful, please cite our work:
+
+```bibtex
+@article{lei2026insightreplay,
+  author = {Lei, Bin and Ding, Caiwen and Yang, Jiachen and Li, Ang and Wang, Xin Eric},
+  title  = {Stateful Reasoning via Insight Replay},
+  year   = {2026},
+}
+```
+
+## License
+
+License is **TBD** — please add a `LICENSE` file (MIT / Apache-2.0 / BSD-3 are common choices for ML code releases) and update this section accordingly.
+
+## Acknowledgements
+
+Built on top of [vLLM](https://github.com/vllm-project/vllm) for fast inference, and the public benchmarks [AIME](https://maa.org/maa-invitational-competitions/), [HMMT](https://www.hmmt.org/), [GPQA Diamond](https://github.com/idavidrein/gpqa), and [LiveCodeBench](https://github.com/LiveCodeBench/LiveCodeBench).
