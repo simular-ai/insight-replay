@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="InsightReplay: a stateful Chain-of-Thought reasoning approach that periodically extracts critical insights and replays them near the active generation frontier to mitigate attention decay in long reasoning trajectories.">
+  <meta name="keywords" content="InsightReplay, Chain-of-Thought, CoT, Reasoning, LLM, Test-time Scaling, Stateful Reasoning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InsightReplay: Stateful Reasoning via Insight Replay</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Stateful Reasoning via Insight Replay</h1>
+          <div class="is-size-5 publication-authors">
+            <!-- TODO: confirm affiliation superscripts with co-authors before sharing the page publicly. -->
+            <span class="author-block">
+              Bin Lei<sup>1</sup>,</span>
+            <span class="author-block">
+              Caiwen Ding<sup>1</sup>,</span>
+            <span class="author-block">
+              Jiachen Yang<sup>2</sup>,</span>
+            <span class="author-block">
+              Ang Li<sup>2</sup>,</span>
+            <span class="author-block">
+              Xin Eric Wang<sup>2</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of Minnesota,</span>
+            <span class="author-block"><sup>2</sup>Simular AI</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/simular-ai/InsightReplay"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/teaser_trajectory.png"
+           alt="Accuracy vs. mean tokens for Baseline (standard CoT) and InsightReplay."/>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">InsightReplay</span> periodically extracts critical insights from the
+        reasoning trace and replays them near the active generation frontier, shifting the accuracy
+        peak to longer chains and raising peak performance.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Chain-of-Thought (CoT) reasoning has become a foundation for eliciting multi-step
+            reasoning in large language models, but recent studies show that its benefits do not
+            scale monotonically with chain length: while longer CoT generally enables a model to
+            tackle harder problems, on a given problem, accuracy typically increases with CoT
+            length up to a point, after which it declines.
+          </p>
+          <p>
+            We identify a major cause of this phenomenon: as the CoT grows, the model's attention
+            to critical insights produced earlier in the trace gradually weakens, making those
+            insights progressively less accessible when they are most needed. We therefore
+            propose <b>InsightReplay</b>, a stateful reasoning approach in which the model
+            periodically extracts critical insights from its reasoning trace and replays them
+            near the active generation frontier, keeping them accessible as the reasoning scales.
+          </p>
+          <p>
+            Extensive experiments on a <b>2&times;3&times;4</b> benchmark grid &mdash; covering
+            model scales {8B, 30B}, model families {Qwen3.5, DeepSeek-R1-Distill-Qwen, Gemma-4},
+            and reasoning benchmarks {AIME, HMMT, GPQA Diamond, LiveCodeBench v5} &mdash; show
+            that 3-round InsightReplay yields accuracy gains across <b>all 24 settings</b>, with
+            an averaged improvement of <b>+1.65</b> points over standard CoT, and a largest
+            single-setting gain of <b>+9.2</b> points on R1-Distill-32B's LiveCodeBench v5
+            subset. Our results suggest that the effectiveness of test-time scaling depends not
+            only on how much a model reasons, but also on whether critical intermediate insights
+            remain accessible throughout long reasoning trajectories.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method</h2>
+        <div class="content has-text-justified">
+          <p>
+            InsightReplay treats reasoning as a stateful process. The reasoning <i>state</i> at
+            any point is the cumulative set of <i>insights</i> the model has generated so far
+            &mdash; compressed abstractions of prior reasoning. Periodically, the model extracts
+            new insights and <i>replays</i> them near the active generation frontier, so that
+            critical intermediate content remains accessible despite the natural attention decay
+            that accompanies long reasoning chains.
+          </p>
+        </div>
+        <img src="./static/images/method_diagram.png"
+             alt="InsightReplay method diagram."
+             style="width: 100%; max-width: 100%; height: auto;"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            Across <b>all 24 settings</b> of the {model-scale} &times; {model-family} &times;
+            {benchmark} grid, 3-round InsightReplay improves accuracy over the standard
+            chain-of-thought baseline. Averaged improvement is <b>+1.65</b> points, with the
+            largest single-setting gain reaching <b>+9.2</b> points on R1-Distill-32B's
+            LiveCodeBench v5 subset.
+          </p>
+        </div>
+        <h3 class="title is-4">30B-tier models</h3>
+        <img src="./static/images/results_30b_tier.png"
+             alt="Results on 30B-tier models across benchmarks."
+             style="width: 100%; max-width: 100%; height: auto;"/>
+        <br/><br/>
+        <h3 class="title is-4">8B-tier models</h3>
+        <img src="./static/images/results_7b_tier.png"
+             alt="Results on 8B-tier models across benchmarks."
+             style="width: 100%; max-width: 100%; height: auto;"/>
+        <br/><br/>
+        <h3 class="title is-4">Aggregate comparison</h3>
+        <img src="./static/images/compare_all.png"
+             alt="Aggregate comparison of InsightReplay vs. baselines."
+             style="width: 100%; max-width: 100%; height: auto;"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{lei2026insightreplay,
+  author    = {Lei, Bin and Ding, Caiwen and Yang, Jiachen and Li, Ang and Wang, Xin Eric},
+  title     = {Stateful Reasoning via Insight Replay},
+  year      = {2026},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://github.com/simular-ai/InsightReplay">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This page is adapted from the <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies project page</a>
+            template.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
