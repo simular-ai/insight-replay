@@ -13,6 +13,3 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
-
-# Large dataset file (>100MB — exceeds GitHub limit; README documents how to obtain it)
-data/livecodebench_v5.jsonl

@@ -6,7 +6,8 @@
 ├── data/                             # benchmark jsonl files
 │   ├── aime.jsonl
 │   ├── gpqa_diamond_test.jsonl
-│   └── hmmt.jsonl                    # livecodebench_v5.jsonl excluded — see Datasets
+│   ├── hmmt.jsonl
+│   └── livecodebench_v5.jsonl        # ~111 MB, tracked via Git LFS
 ├── scripts/
 │   ├── run_sampling.py               # sampler (baseline + multi-turn extract-and-replay)
 │   ├── prompt.py                     # model / dataset configs and prompt builders
@@ -30,8 +31,9 @@ of `unlimited` (baseline), `verify_only`, `insightreplay` (1-turn), or
 ## Datasets
 
 The `data/` directory ships with `aime.jsonl`, `gpqa_diamond_test.jsonl`,
-and `hmmt.jsonl`. **LiveCodeBench (`livecodebench_v5.jsonl`, ~111 MB) is
-not bundled** because it exceeds the supplementary-material size limit.
+`hmmt.jsonl`, and `livecodebench_v5.jsonl`. The LiveCodeBench file is
+~111 MB and is tracked via [Git LFS](https://git-lfs.com); install
+`git-lfs` before cloning, or run `git lfs pull` after cloning to fetch it.
 
 ## Requirements
 
