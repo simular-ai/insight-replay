@@ -37,18 +37,46 @@ InsightReplay treats reasoning as a **stateful** process. At any point, the reas
 
 ## Results
 
+### Inference-time
+
+Applying InsightReplay as a **sampling-time** decoder on already-trained models. The pipeline at the repo root (`./run_all.sh`) reproduces these numbers.
+
 <p align="center">
-  <img src="assets/results_aggregate.png" alt="Aggregate comparison" width="900"/>
+  <img src="assets/results_aggregate.png" alt="Aggregate inference-time comparison" width="900"/>
 </p>
 
 <details>
 <summary><b>Per-tier breakdown</b> (click to expand)</summary>
 
 #### 30B-tier models
-<img src="assets/results_30b_tier.png" alt="30B-tier results" width="900"/>
+<img src="assets/results_30b_tier.png" alt="30B-tier inference-time results" width="900"/>
 
 #### 8B-tier models
-<img src="assets/results_8b_tier.png" alt="8B-tier results" width="900"/>
+<img src="assets/results_8b_tier.png" alt="8B-tier inference-time results" width="900"/>
+
+</details>
+
+### Training-time
+
+Running InsightReplay as the **rollout strategy during RL training** (GRPO+DAPO on Qwen3-4B-Base, 128 GPUs × 16 nodes). The recipe lives under [`training/`](training/).
+
+<p align="center">
+  <img src="assets/train_val_score.png" alt="Validation score over RL training steps: InsightReplay vs baseline" width="900"/>
+</p>
+
+<sub>Validation score (AIME-2025) over RL training steps. The InsightReplay-rollout run lifts and sustains a higher validation score than the baseline GRPO run on the same Qwen3-4B-Base + DAPO-Math-15k setup.</sub>
+
+<details>
+<summary><b>Training diagnostics</b> (click to expand)</summary>
+
+#### Actor loss
+<img src="assets/train_actor_loss.png" alt="Actor loss over training steps" width="900"/>
+
+#### Critic loss
+<img src="assets/train_critic_loss.png" alt="Critic loss over training steps" width="900"/>
+
+#### Response length (non-aborted rollouts)
+<img src="assets/train_response_length.png" alt="Mean response length over training steps" width="900"/>
 
 </details>
 
