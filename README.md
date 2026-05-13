@@ -47,6 +47,16 @@ Applying InsightReplay as a **sampling-time** decoder on already-trained models.
 #### 8B-tier models
 <img src="assets/results_8b_tier.png" alt="8B-tier inference-time results" width="900"/>
 
+### Training-time
+
+Running InsightReplay as the **rollout strategy during RL training** (GRPO+DAPO on Qwen3-4B-Base). The recipe lives under [`training/`](training/).
+
+<p align="center">
+  <img src="assets/results_aggregate.png" alt="AIME-2025 best@32 / maj@32 / mean@32 over RL training steps" width="900"/>
+</p>
+
+<sub>AIME-2025 validation accuracy (best@32, maj@32, mean@32) over RL training steps, comparing baseline GRPO vs InsightReplay-rollout GRPO on Qwen3-4B-Base + DAPO-Math-15k. Dashed lines are fitted trends.</sub>
+
 ## Repository Layout
 
 ```
