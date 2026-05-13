@@ -10,8 +10,8 @@
 #
 # Each cell is idempotent: if its output jsonl already exists, that step is
 # skipped. vLLM is started once per model and shared across the four methods
-# and all datasets, so one model load amortizes 12 method runs (4 methods ×
-# 3 datasets). LCB is auto-graded after every run.
+# and all datasets, so one model load amortizes 16 method runs (4 methods ×
+# 4 datasets). LCB is auto-graded after every run.
 #
 # Inputs:
 #   ./scripts/run_sampling.py                  — per-method sampler
@@ -50,10 +50,8 @@ export FBE_GRADE_TIMEOUT="${FBE_GRADE_TIMEOUT:-20}"
 export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
 export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}"
 
-# Datasets to evaluate. HMMT is excluded by default (it triples the LCB
-# grading cost without changing the qualitative story); add "hmmt" to the
-# array if you want it.
-DATASETS=(aime gpqa livecodebench)
+# Datasets to evaluate — the full 4-benchmark grid reported in the paper.
+DATASETS=(aime hmmt gpqa livecodebench)
 
 NUM_GPUS=$(echo "$FBE_GPU_IDS" | tr ',' '\n' | wc -l)
 mkdir -p outputs

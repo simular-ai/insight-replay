@@ -75,6 +75,7 @@ InsightReplay treats reasoning as a **stateful** process. At any point, the reas
 │   ├── sample_eval_livecodebench.py  # one-off LCB sanity tester
 │   └── math_verify_util.py           # math equivalence checker (LaTeX answers)
 ├── assets/                           # figures used in this README
+├── training/                         # RL training recipe (bundled verl + InsightReplay agent loop)
 └── outputs/                          # generated at run time
 ```
 
@@ -117,7 +118,7 @@ docker pull python:3.10-slim
 That's it. The driver:
 
 1. starts vLLM once per model,
-2. iterates baseline → verify_only → 1-turn → 3-turn over `aime`, `gpqa`, `livecodebench` for that model,
+2. iterates baseline → verify_only → 1-turn → 3-turn over `aime`, `hmmt`, `gpqa`, `livecodebench` for that model,
 3. auto-grades any `livecodebench` outputs in place,
 4. cleans up vLLM and moves to the next model.
 
@@ -165,6 +166,10 @@ outputs/summary_insightreplay_3turns.csv
 
 with columns `model,dataset,method,n,n_correct,acc,avg_tok,max_tok,avg_steps,out_dir`.
 
+## Training
+
+The top-level pipeline above runs the **inference-time** InsightReplay evaluation. The **RL training** recipe — the GRPO+DAPO run on Qwen3-4B-Base that produced the paper's RL results — lives separately under [`training/`](training/), with its own bundled (slimmed) copy of [verl](https://github.com/verl-project/verl) and a dedicated conda env. See [`training/README.md`](training/README.md) for the two-env reproduce flow, dataset prep, the 128-GPU cluster launchers (`baseline_cluster.py` / `insight_cluster.py`), and a description of how the InsightReplay agent loop slots into verl's rollout pipeline.
+
 ## Citation
 
 If you find InsightReplay useful, please cite our work:
@@ -183,4 +188,4 @@ License is **TBD** — please add a `LICENSE` file (MIT / Apache-2.0 / BSD-3 are
 
 ## Acknowledgements
 
-Built on top of [vLLM](https://github.com/vllm-project/vllm) for fast inference, and the public benchmarks [AIME](https://maa.org/maa-invitational-competitions/), [HMMT](https://www.hmmt.org/), [GPQA Diamond](https://github.com/idavidrein/gpqa), and [LiveCodeBench](https://github.com/LiveCodeBench/LiveCodeBench).
+Built on top of [vLLM](https://github.com/vllm-project/vllm) for fast inference, [verl](https://github.com/verl-project/verl) for the RL training pipeline (see [`training/`](training/)), and the public benchmarks [AIME](https://maa.org/maa-invitational-competitions/), [HMMT](https://www.hmmt.org/), [GPQA Diamond](https://github.com/idavidrein/gpqa), and [LiveCodeBench](https://github.com/LiveCodeBench/LiveCodeBench).
