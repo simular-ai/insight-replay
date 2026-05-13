@@ -1,0 +1,13 @@
+# Pinned to the exact versions used in our test environment (Python 3.12).
+# Note: our env was set up with a hand-installed transformers 5.6.0.dev0,
+# but vllm 0.19.0 officially declares transformers<5,>=4.56.0. We pin to
+# the latest 4.x stable that satisfies vllm so a fresh `pip install` resolves
+# cleanly; the AutoTokenizer API we use is stable across both.
+
+vllm==0.19.0
+transformers==4.57.6
+requests==2.33.1
+tqdm==4.67.3
+numpy==2.2.6
+sympy==1.14.0
+math-verify==0.9.0
