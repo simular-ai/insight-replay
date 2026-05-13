@@ -32,16 +32,7 @@ verl has heavy and opinionated dependencies (vLLM + torch + CUDA + Ray + FSDP). 
 
 ### Set up the training env
 
-```bash
-conda create -n insightreplay-train python=3.10 -y
-conda activate insightreplay-train
-
-# verl itself + its deps
-cd training/verl
-pip install -e .
-```
-
-vLLM (which verl uses as the rollout engine) pulls in `torch` / `cuda` runtime via its own wheel. If you need a torch build matched to a specific CUDA version, install torch separately first.
+Follow verl's own installation instructions — see [`training/verl/README.md`](verl/README.md) for the canonical Python / CUDA / torch / vLLM setup steps. Once the env is ready, our additions (the InsightReplay agent loop and the cluster launchers) plug in without further setup.
 
 ## Prepare datasets
 
@@ -69,7 +60,7 @@ actor_rollout_ref.rollout.agent.default_agent_loop=insight_replay_agent
 ```
 plus an `exp_name` change. Everything else is byte-for-byte identical.
 
-## How InsightReplay works (at the rollout level)
+## How InsightReplay works
 
 `training/verl/verl/experimental/agent_loop/insight_replay_agent_loop.py` implements a **two-phase rollout** in place of verl's stock single-turn rollout:
 
