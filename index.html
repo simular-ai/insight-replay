@@ -25,15 +25,6 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
-
-  <!-- MathJax for inline / display equations in Math Modeling section -->
-  <script>
-    window.MathJax = {
-      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -61,15 +52,6 @@
           <div class="is-size-5 publication-authors">
             <span class="author-block"><sup>1</sup>University of Minnesota,</span>
             <span class="author-block"><sup>2</sup>Simular AI</span>
-          </div>
-
-          <div class="is-size-6 publication-authors" style="margin-top: 0.4em;">
-            <span class="author-block">
-              Contact:
-              <a href="mailto:leib2765@gmail.com">leib2765@gmail.com</a>
-              &nbsp;·&nbsp;
-              <a href="mailto:eric@simular.ai">eric@simular.ai</a>
-            </span>
           </div>
 
           <div class="column has-text-centered">
@@ -113,52 +95,32 @@
 </section>
 
 
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <img src="./static/images/teaser_trajectory.png"
-           alt="Accuracy vs. mean tokens for Baseline (standard CoT) and InsightReplay."/>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">InsightReplay</span> periodically extracts critical insights from the
-        reasoning trace and replays them near the active generation frontier, shifting the accuracy
-        peak to longer chains and raising peak performance.
-      </h2>
-    </div>
-  </div>
-</section>
-
-
 <section class="section">
   <div class="container is-max-desktop">
     <!-- Motivation. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Motivation</h2>
-        <div class="content has-text-justified">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Motivation</h2>
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            Chain-of-Thought (CoT) prompting has become a foundation for eliciting reasoning in
-            large language models, and the recent wave of <i>test-time scaling</i> takes this
-            further: pushing the reasoning-token budget higher often translates into higher
-            accuracy on hard problems.
-          </p>
-          <p>
-            But several recent studies converge on a less optimistic picture: <b>longer CoT is
-            not monotonically better.</b> On a fixed-difficulty problem, accuracy typically
-            traces an <i>inverted-U</i> as CoT length grows &mdash; first improving, peaking,
-            then declining once the chain becomes excessively long (Wu et al. 2025; Chen et al.
-            2026; Gema et al. 2025). Harder problems shift this peak rightward, but the decline
-            itself is robust.
-          </p>
-          <p>
-            That raises a sharp question: <b>what drives the decline?</b> Why does the model get
-            <i>worse</i> at a problem the more it thinks about it? Prior work has identified that
-            not all reasoning tokens contribute equally &mdash; a small subset of sentences
-            disproportionately determines the final answer, and certain attention heads
-            consistently focus on them (Bogdan et al. 2025). We pick up from there with a
-            different question: <i>how does the model's access to such critical insights evolve
-            as the reasoning chain grows?</i>
+            Recent work shows that <b>longer chain-of-thought (CoT) is not monotonically better</b>.
+            On a fixed-difficulty problem, accuracy traces an <i>inverted-U</i> as CoT length grows
+            &mdash; first improving, peaking, then <i>declining</i> as the chain becomes
+            excessively long (Wu et al. 2025; Chen et al. 2026; Gema et al. 2025). We ask: what
+            drives this decline, and can it be fixed?
           </p>
         </div>
+        <p style="text-align: center; margin-top: 1.5em;">
+          <img src="./static/images/teaser_trajectory.png"
+               alt="Accuracy vs. mean tokens — baseline CoT exhibits an inverted-U; InsightReplay shifts the peak rightward and raises it."
+               style="width: 100%; max-width: 900px; height: auto;"/>
+        </p>
+        <p class="has-text-centered" style="font-size: 0.85em;">
+          <i>Accuracy vs. mean tokens for Baseline (standard CoT) and InsightReplay (1, 3, 5 replay
+          rounds), averaged over three 30B-tier models on the LiveCodeBench v5 subset. Baseline
+          peaks at ~15K tokens then declines; InsightReplay turns the degradation regime into
+          continued growth.</i>
+        </p>
       </div>
     </div>
     <!--/ Motivation. -->
@@ -172,31 +134,36 @@
     <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-3 has-text-centered">Preliminary Experiments</h2>
-        <div class="content has-text-justified">
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            We probe long-CoT traces with two controlled experiments and surface two properties
-            of <i>critical insights</i> &mdash; the small set of compressed sub-conclusions
-            scattered through a reasoning trace.
+            Two controlled experiments on <b>60 AIME problems with Qwen3-8B</b> reveal two
+            properties of <i>critical insights</i> &mdash; the small set of compressed
+            sub-conclusions scattered through a long reasoning trace.
           </p>
         </div>
 
-        <h3 class="title is-4">Finding 1 &mdash; Insights and the reasoning trace are <i>complementary</i></h3>
-        <div class="content has-text-justified">
+        <h3 class="title is-4" style="margin-top: 1.5em;">Finding 1 &mdash; Insights and the reasoning trace are <i>complementary</i></h3>
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            On <b>60 AIME problems with Qwen3-8B</b>, we generate full thinking traces
-            (max 30K tokens), then extract 5&ndash;7 key insights from each. We feed the model
-            seven contents inside the <code>&lt;think&gt;</code> tag and compute the
-            answer-probability <i>P</i>(ans) in a single forward pass:
+            We extract 5&ndash;7 key insights from each full thinking trace, then feed seven
+            content variants inside the <code>&lt;think&gt;</code> tag and read the answer
+            probability <i>P</i>(ans).
+          </p>
+          <p style="font-size: 0.9em;">
+            <b>Legend:</b>
+            &nbsp;<b>✓</b> = present
+            &nbsp;·&nbsp; <b>—</b> = absent
+            &nbsp;·&nbsp; <b>∅</b> = replaced with random tokens of the same length as the original CoT trace.
           </p>
         </div>
-        <div class="table-container" style="overflow-x: auto;">
+        <div class="table-container" style="overflow-x: auto; margin-top: 1em;">
           <table class="table is-striped is-narrow is-bordered is-fullwidth" style="font-size: 0.9em;">
             <thead>
               <tr>
                 <th rowspan="2" style="vertical-align: middle;">Condition</th>
                 <th colspan="3" class="has-text-centered">Content inside <code>&lt;think&gt;</code></th>
-                <th rowspan="2" style="vertical-align: middle;" class="has-text-right">Tokens</th>
-                <th rowspan="2" style="vertical-align: middle;" class="has-text-right"><i>P</i>(ans)</th>
+                <th rowspan="2" style="vertical-align: middle;" class="has-text-centered">Tokens</th>
+                <th rowspan="2" style="vertical-align: middle;" class="has-text-centered"><i>P</i>(ans)</th>
               </tr>
               <tr>
                 <th class="has-text-centered">CoT trace</th>
@@ -205,55 +172,41 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td><b>A</b> Full trace</td>           <td class="has-text-centered">✓</td>      <td class="has-text-centered">&mdash;</td><td class="has-text-centered">&mdash;</td><td class="has-text-right">16,731</td><td class="has-text-right">0.512</td></tr>
-              <tr><td><b>B</b> Q + insights</td>         <td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-right">378</td>   <td class="has-text-right">0.273</td></tr>
-              <tr><td><b>C</b> Insights only</td>        <td class="has-text-centered">&mdash;</td><td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-right">236</td>   <td class="has-text-right">0.387</td></tr>
-              <tr><td><b>D</b> Full + Q + insights</td>  <td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-right">17,109</td><td class="has-text-right"><b>0.557</b></td></tr>
-              <tr><td><b>E</b> Full + insights</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-right">16,967</td><td class="has-text-right">0.545</td></tr>
-              <tr><td><b>F</b> Random + Q + insights</td><td class="has-text-centered">∅</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-right">17,109</td><td class="has-text-right">0.131</td></tr>
-              <tr><td><b>G</b> Random + insights</td>    <td class="has-text-centered">∅</td>      <td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-right">16,967</td><td class="has-text-right">0.127</td></tr>
+              <tr><td><b>A</b> Full trace</td>           <td class="has-text-centered">✓</td>      <td class="has-text-centered">&mdash;</td><td class="has-text-centered">&mdash;</td><td class="has-text-centered">16,731</td><td class="has-text-centered">0.512</td></tr>
+              <tr><td><b>B</b> Q + insights</td>         <td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">378</td>   <td class="has-text-centered">0.273</td></tr>
+              <tr><td><b>C</b> Insights only</td>        <td class="has-text-centered">&mdash;</td><td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-centered">236</td>   <td class="has-text-centered">0.387</td></tr>
+              <tr><td><b>D</b> Full + Q + insights</td>  <td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">17,109</td><td class="has-text-centered"><b>0.557</b></td></tr>
+              <tr><td><b>E</b> Full + insights</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-centered">16,967</td><td class="has-text-centered">0.545</td></tr>
+              <tr><td><b>F</b> Random + Q + insights</td><td class="has-text-centered">∅</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">✓</td>      <td class="has-text-centered">17,109</td><td class="has-text-centered">0.131</td></tr>
+              <tr><td><b>G</b> Random + insights</td>    <td class="has-text-centered">∅</td>      <td class="has-text-centered">&mdash;</td><td class="has-text-centered">✓</td>      <td class="has-text-centered">16,967</td><td class="has-text-centered">0.127</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="content has-text-justified">
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            Two things stand out. <b>(i) Insights carry concentrated signal.</b>
-            Condition <b>C</b> retains <b>75.6%</b> of the answer probability with only
-            <b>1.4%</b> of the tokens. <b>(ii) Insights are additive on top of the trace.</b>
-            Conditions <b>D / E</b> (trace + insights replayed) outperform <b>A</b> (trace
-            alone): even when the reasoning is already in context, re-exposing the model to its
-            own insights yields measurable gains.
+            <b>(i) Insights carry concentrated signal</b> &mdash; condition <b>C</b> keeps
+            <b>75.6%</b> of <i>P</i>(ans) with only <b>1.4%</b> of the tokens.
+            <b>(ii) Insights are additive on top of the trace</b> &mdash; <b>D / E</b> beat
+            <b>A</b>, so re-exposing the model to its own insights helps even when the trace is
+            already in context.
           </p>
         </div>
 
-        <h3 class="title is-4">Finding 2 &mdash; Attention to critical insights <i>decays</i> with distance</h3>
-        <div class="content has-text-justified">
-          <p>
-            We measure how the pre-softmax attention score from the answer token to a critical
-            insight varies as the insight is pushed further from the generation frontier. To
-            isolate distance from content, we insert semantically neutral filler tokens
-            (newline + space) between insight and answer at insertion ratio
-            <i>ρ</i> &isin; {0, 0.1, 0.2, 0.3, 0.4}, giving total distance (1+<i>ρ</i>)<i>d</i>.
-            On Qwen3-8B and Gemma-4-31B-it:
-          </p>
-        </div>
-        <p style="text-align: center;">
+        <h3 class="title is-4" style="margin-top: 2em;">Finding 2 &mdash; Attention to critical insights <i>decays</i> with distance</h3>
+        <p style="text-align: center; margin-top: 1em;">
           <img src="./static/images/attention_decay.png"
                alt="Pre-softmax attention to critical insights vs. insertion ratio ρ."
                style="width: 100%; max-width: 900px; height: auto;"/>
         </p>
-        <p class="has-text-centered" style="font-size: 0.85em;">
-          <i>Pre-softmax attention from the answer token to insights vs. insertion ratio ρ at
-          each model's final attention layer.</i>
-        </p>
-        <div class="content has-text-justified">
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            From <i>ρ</i> = 0 to <i>ρ</i> = 0.4, attention to critical insights drops
-            <b>19.2%</b> on Qwen3-8B (paired bootstrap, <i>p</i> &lt; 0.001) and <b>3.3%</b> on
-            Gemma-4-31B-it. The decay is monotonic and survives a very different RoPE
-            configuration (Gemma-4 uses partial-rotary RoPE on only the first quarter of head
-            dimensions), suggesting this is a general property of trained attention rather than
-            a feature of any specific positional encoding.
+            We push insights further from the generation frontier by inserting semantically
+            neutral filler tokens at ratio <i>ρ</i> &isin; {0, 0.1, 0.2, 0.3, 0.4} and measure
+            the pre-softmax attention from the answer token. From <i>ρ</i> = 0 to <i>ρ</i> = 0.4,
+            attention drops <b>19.2%</b> on Qwen3-8B (paired bootstrap, <i>p</i> &lt; 0.001) and
+            <b>3.3%</b> on Gemma-4-31B-it. The decay is monotonic and survives a very different
+            RoPE configuration &mdash; suggesting it reflects a general property of trained
+            attention, not any specific positional encoding.
           </p>
         </div>
       </div>
@@ -265,79 +218,22 @@
 
 <section class="section">
   <div class="container is-max-desktop">
-    <!-- Math Modeling. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Math Modeling</h2>
-        <div class="content has-text-justified">
+        <h2 class="title is-3 has-text-centered">Method</h2>
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            Following Wu et al. (2025), for a task of difficulty $T$ and a model with reasoning
-            capability $M$, the probability that an $N$-step CoT produces the correct final
-            answer is
-          </p>
-          <p style="text-align: center;">
-            $A_0(N) \;=\; \alpha \, \bigl[\,(1-\sigma(T))\,(1 - T/(NM))\,\bigr]^{\,N}\!,$
-          </p>
-          <p>
-            where $\sigma(T)$ is the probability of mis-generating the next sub-question and
-            $T/(NM)$ is the per-step error rate. Crucially, this parameterization
-            <i>drops the dependence on history</i>: each step is assumed accurate independently
-            of its position in the chain.
-          </p>
-          <p>
-            Our <b>Finding 2</b> says otherwise: as step index $i$ grows, the model's ability to
-            attend to earlier critical insights diminishes. We restore this missing dependence
-            by introducing an <b>insight accessibility function</b> $\Phi(i)$ into the
-            sub-question term, modeling sub-question accuracy at step $i$ as
-            $(1-\sigma(T))\cdot\Phi(i)$, with
-          </p>
-          <p style="text-align: center;">
-            $\Phi(0)=1,\quad \Phi\;\text{strictly decreasing},\quad \lim_{i\to\infty}\Phi(i)=0.$
-          </p>
-          <p>
-            This gives two accuracy curves &mdash; the real world (with decay) and InsightReplay,
-            which relocates critical insights to a fixed distance $d_0$ at <i>every</i> step:
-          </p>
-          <p style="text-align: center;">
-            $A_\Phi(N) = [p(N)]^N \cdot \prod_{i=1}^{N}\Phi(i),
-            \qquad
-            A_{\mathrm{IR}}(N) = \bigl[\,p(N)\cdot\Phi(d_0)\,\bigr]^N,$
-          </p>
-          <p>
-            where $p(N) := (1-\sigma(T))(1-T/(NM))$ is the per-step accuracy without decay. Because
-            $\Phi(d_0)$ is a positive constant in $A_{\mathrm{IR}}$ while $\Phi(i)$ inside
-            $A_\Phi$ is driven to zero, two consequences follow under mild conditions:
-            <b>(i) InsightReplay shifts the optimal CoT length $N^*$ rightward</b> &mdash; the
-            model can productively think for longer before degradation kicks in, and
-            <b>(ii) InsightReplay raises the achievable peak accuracy.</b> The full proof is in
-            the paper.
+            InsightReplay treats reasoning as a <i>stateful</i> process. The model periodically
+            extracts critical insights from its trace and <i>replays</i> them near the active
+            generation frontier, so they stay inside the attention window where attention is
+            strongest &mdash; cancelling the distance-decay from Finding 2.
           </p>
         </div>
-      </div>
-    </div>
-    <!--/ Math Modeling. -->
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Method</h2>
-        <div class="content has-text-justified">
-          <p>
-            InsightReplay treats reasoning as a stateful process. The reasoning <i>state</i> at
-            any point is the cumulative set of <i>insights</i> the model has generated so far
-            &mdash; compressed abstractions of prior reasoning. Periodically, the model extracts
-            new insights and <i>replays</i> them near the active generation frontier, so that
-            critical intermediate content remains accessible despite the natural attention decay
-            that accompanies long reasoning chains.
-          </p>
-        </div>
-        <img src="./static/images/method_diagram.png"
-             alt="InsightReplay method diagram."
-             style="width: 100%; max-width: 100%; height: auto;"/>
+        <p style="text-align: center; margin-top: 1em;">
+          <img src="./static/images/method_diagram.png"
+               alt="InsightReplay method diagram."
+               style="width: 100%; max-width: 100%; height: auto;"/>
+        </p>
       </div>
     </div>
   </div>
@@ -348,30 +244,36 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Results</h2>
-        <div class="content has-text-justified">
+        <h2 class="title is-3 has-text-centered">Results</h2>
+        <div class="content has-text-justified" style="max-width: 820px; margin: 0 auto;">
           <p>
-            Across <b>all 24 settings</b> of the {model-scale} &times; {model-family} &times;
-            {benchmark} grid, 3-round InsightReplay improves accuracy over the standard
-            chain-of-thought baseline. Averaged improvement is <b>+1.65</b> points, with the
-            largest single-setting gain reaching <b>+9.2</b> points on R1-Distill-32B's
-            LiveCodeBench v5 subset.
+            Across <b>all 24 settings</b> &mdash; {8B, 30B} × {Qwen3.5, R1-Distill-Qwen,
+            Gemma-4} × {AIME, HMMT, GPQA Diamond, LiveCodeBench v5} &mdash; 3-round
+            InsightReplay beats standard CoT. Averaged gain <b>+1.65</b> points; peak
+            single-setting gain <b>+9.2</b> on R1-Distill-32B / LCB v5.
           </p>
         </div>
-        <h3 class="title is-4">30B-tier models</h3>
-        <img src="./static/images/results_30b_tier.png"
-             alt="Results on 30B-tier models across benchmarks."
-             style="width: 100%; max-width: 100%; height: auto;"/>
-        <br/><br/>
-        <h3 class="title is-4">8B-tier models</h3>
-        <img src="./static/images/results_7b_tier.png"
-             alt="Results on 8B-tier models across benchmarks."
-             style="width: 100%; max-width: 100%; height: auto;"/>
-        <br/><br/>
-        <h3 class="title is-4">Aggregate comparison</h3>
-        <img src="./static/images/compare_all.png"
-             alt="Aggregate comparison of InsightReplay vs. baselines."
-             style="width: 100%; max-width: 100%; height: auto;"/>
+
+        <h3 class="title is-4" style="margin-top: 1.5em;">30B-tier models</h3>
+        <p style="text-align: center;">
+          <img src="./static/images/results_30b_tier.png"
+               alt="Results on 30B-tier models across benchmarks."
+               style="width: 100%; max-width: 100%; height: auto;"/>
+        </p>
+
+        <h3 class="title is-4" style="margin-top: 1.5em;">8B-tier models</h3>
+        <p style="text-align: center;">
+          <img src="./static/images/results_7b_tier.png"
+               alt="Results on 8B-tier models across benchmarks."
+               style="width: 100%; max-width: 100%; height: auto;"/>
+        </p>
+
+        <h3 class="title is-4" style="margin-top: 1.5em;">Aggregate comparison</h3>
+        <p style="text-align: center;">
+          <img src="./static/images/compare_all.png"
+               alt="Aggregate comparison of InsightReplay vs. baselines."
+               style="width: 100%; max-width: 100%; height: auto;"/>
+        </p>
       </div>
     </div>
   </div>
