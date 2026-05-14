@@ -6,7 +6,7 @@
 
 [![Project Page](https://img.shields.io/badge/Project-Page-1f72ff?logo=github&logoColor=white)](https://simular-ai.github.io/InsightReplay/)
 [![arXiv](https://img.shields.io/badge/arXiv-Coming%20Soon-b31b1b?logo=arxiv&logoColor=white)](#)
-[![License](https://img.shields.io/badge/License-TBD-lightgray)](#license)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue)](#license)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 <img src="assets/teaser.png" alt="Accuracy vs. mean tokens for Baseline vs. InsightReplay" width="720"/>
@@ -189,7 +189,7 @@ If you find InsightReplay useful, please cite our work:
 
 ## License
 
-License is **TBD** — please add a `LICENSE` file (MIT / Apache-2.0 / BSD-3 are common choices for ML code releases) and update this section accordingly.
+Released under the **Apache License 2.0** — see [`LICENSE`](LICENSE) for the full text. The bundled `training/verl/` subtree is upstream verl, also Apache-2.0, with its own `LICENSE` and `Notice.txt` preserved next to its sources.
 
 ## Acknowledgements
 
