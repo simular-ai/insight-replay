@@ -134,7 +134,7 @@ Each cell is **idempotent** — if its output jsonl already exists the step is s
 The driver respects these environment variables:
 
 | Variable | Default | Notes |
-|---|---|---|
+|:---:|:---:|:---:|
 | `FBE_VLLM_PORT` | `8270` | port vLLM binds to |
 | `FBE_GPU_IDS` | `0,1,2,3,4,5,6,7` | GPUs visible to vLLM |
 | `FBE_GPU_MEM` | `0.92` | vLLM `--gpu-memory-utilization` |
