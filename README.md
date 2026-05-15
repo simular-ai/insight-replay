@@ -4,7 +4,7 @@
 
 **Periodically extract critical insights from a model's reasoning trace and replay them near the active generation frontier — keeping insights accessible as the chain scales.**
 
-[![Project Page](https://img.shields.io/badge/Project-Page-1f72ff?logo=github&logoColor=white)](https://simular-ai.github.io/InsightReplay/)
+[![Project Page](https://img.shields.io/badge/Project-Page-1f72ff?logo=github&logoColor=white)](https://research.simular.ai/insight-replay/)
 [![arXiv](https://img.shields.io/badge/arXiv-2605.14457-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.14457)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue)](#license)
 
