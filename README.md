@@ -7,7 +7,6 @@
 [![Project Page](https://img.shields.io/badge/Project-Page-1f72ff?logo=github&logoColor=white)](https://simular-ai.github.io/InsightReplay/)
 [![arXiv](https://img.shields.io/badge/arXiv-2605.14457-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.14457)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue)](#license)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 <img src="assets/teaser.png" alt="Accuracy vs. mean tokens for Baseline vs. InsightReplay" width="720"/>
 
