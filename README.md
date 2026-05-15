@@ -2,7 +2,7 @@
 
 Static project page for **Stateful Reasoning via Insight Replay**.
 
-Live URL (once deployed): https://simular-ai.github.io/InsightReplay/
+Live URL: https://research.simular.ai/insight-replay/
 
 ## Deploy
 
