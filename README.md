@@ -5,7 +5,7 @@
 **Periodically extract critical insights from a model's reasoning trace and replay them near the active generation frontier — keeping insights accessible as the chain scales.**
 
 [![Project Page](https://img.shields.io/badge/Project-Page-1f72ff?logo=github&logoColor=white)](https://simular-ai.github.io/InsightReplay/)
-[![arXiv](https://img.shields.io/badge/arXiv-Coming%20Soon-b31b1b?logo=arxiv&logoColor=white)](#)
+[![arXiv](https://img.shields.io/badge/arXiv-2605.14457-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.14457)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue)](#license)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
@@ -181,9 +181,11 @@ If you find InsightReplay useful, please cite our work:
 
 ```bibtex
 @article{lei2026insightreplay,
-  author = {Lei, Bin and Ding, Caiwen and Yang, Jiachen and Li, Ang and Wang, Xin Eric},
-  title  = {Stateful Reasoning via Insight Replay},
-  year   = {2026},
+  author  = {Lei, Bin and Ding, Caiwen and Yang, Jiachen and Li, Ang and Wang, Xin Eric},
+  title   = {Stateful Reasoning via Insight Replay},
+  journal = {arXiv preprint arXiv:2605.14457},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2605.14457},
 }
 ```
 
