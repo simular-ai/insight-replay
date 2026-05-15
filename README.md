@@ -99,8 +99,9 @@ The `data/` directory ships with `aime.jsonl`, `gpqa_diamond_test.jsonl`, `hmmt.
 ## Install
 
 ```bash
-# (optional) fresh virtualenv
-python3 -m venv .venv && source .venv/bin/activate
+# Fresh conda env
+conda create -n insight-replay python=3.12 -y
+conda activate insight-replay
 
 # Python deps. vLLM pulls in torch / cuda runtime; install separately if
 # you need a torch build matched to a non-default CUDA version.
