@@ -10,7 +10,7 @@ matplotlib
 rich
 sentencepiece==0.1.99
 # dlimp @ git+https://github.com/moojink/dlimp_openvla
-diffusers==0.30.3
+diffusers==0.38.0
 imageio
 uvicorn
 fastapi
