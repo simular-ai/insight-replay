@@ -5,7 +5,7 @@
 # cleanly; the AutoTokenizer API we use is stable across both.
 
 vllm==0.19.0
-transformers==4.57.6
+transformers==5.10.1
 requests==2.33.1
 tqdm==4.67.3
 numpy==2.2.6
