@@ -4,7 +4,7 @@
 # the latest 4.x stable that satisfies vllm so a fresh `pip install` resolves
 # cleanly; the AutoTokenizer API we use is stable across both.
 
-vllm==0.19.0
+vllm==0.27.0
 transformers==4.57.6
 requests==2.33.1
 tqdm==4.67.3
